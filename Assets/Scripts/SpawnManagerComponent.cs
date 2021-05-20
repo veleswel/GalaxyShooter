@@ -23,11 +23,6 @@ public class SpawnManagerComponent : MonoBehaviour
         StartCoroutine(_spawnRoutine);
     }
 
-    void Update()
-    {
-        
-    }
-
     IEnumerator SpawnRoutine()
     {
         while (!StopSpawning)

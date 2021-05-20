@@ -16,7 +16,7 @@ public class Enemy : MonoBehaviour
         Move();
     }
 
-    void OnTriggerEnter(Collider collider)
+    void OnTriggerEnter2D(Collider2D collider)
     {
         if (collider.gameObject.tag == "Laser")
         {

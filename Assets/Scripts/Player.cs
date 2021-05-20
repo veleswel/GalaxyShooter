@@ -21,11 +21,15 @@ public class Player : MonoBehaviour
 
     private SpawnManagerComponent _spawnManager;
 
+    private Vector2 _playerSize;
+
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
 
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManagerComponent>();
+
+        _playerSize = GetComponent<BoxCollider2D>().size * transform.localScale;
     }
 
     void Update()
@@ -41,7 +45,9 @@ public class Player : MonoBehaviour
 
         Rect bounds = Camera.main.GetComponent<CameraBoundsComponent>().Bounds;
 
-        transform.position = new Vector3(transform.position.x, Mathf.Clamp(transform.position.y, bounds.yMin, 0.0f), transform.position.z);
+        float y = Mathf.Clamp(transform.position.y, bounds.yMin + _playerSize.y / 2, 0.0f - _playerSize.y / 2);
+
+        transform.position = new Vector3(transform.position.x, y, transform.position.z);
 
         if (transform.position.x >= bounds.xMax)
         {
@@ -59,9 +65,10 @@ public class Player : MonoBehaviour
         {
             _nextFire = Time.time + _fireRate;
 
-            BoxCollider box = GetComponent<BoxCollider>();
-            
-            Vector3 spawnPosition = new Vector3(transform.position.x, transform.position.y + box.size.y, transform.position.z);
+            float playerVerticalOffset = _playerSize.y / 2;
+            float laserVerticalOffset = (_laserPrefab.GetComponent<BoxCollider2D>().size * _laserPrefab.transform.localScale).y / 2;
+
+            Vector3 spawnPosition = new Vector3(transform.position.x, transform.position.y + playerVerticalOffset - laserVerticalOffset, transform.position.z);
 
             Instantiate(_laserPrefab, spawnPosition, Quaternion.identity);
         }
