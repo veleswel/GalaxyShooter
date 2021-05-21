@@ -12,6 +12,9 @@ public class Player : MonoBehaviour
     private GameObject _laserPrefab;
 
     [SerializeField]
+    private GameObject _tripleShotPrefab;
+
+    [SerializeField]
     private float _fireRate = 0.5f;
 
     private float _nextFire = -1f;
@@ -19,9 +22,17 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _lives = 3;
 
+    [SerializeField]
+    private float _laserSpawnVerticalOffset = 1.0f;
+
     private SpawnManagerComponent _spawnManager;
 
     private Vector2 _playerSize;
+
+    private bool _isTripleShotEnabled = false;
+
+    [SerializeField]
+    private float _powerDownTime = 5f;
 
     void Start()
     {
@@ -35,7 +46,11 @@ public class Player : MonoBehaviour
     void Update()
     {
         Move();
-        Fire();
+
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire)
+        {
+           Fire();
+        }
     }
 
     void Move()
@@ -46,7 +61,6 @@ public class Player : MonoBehaviour
         Rect bounds = Camera.main.GetComponent<CameraBoundsComponent>().Bounds;
 
         float y = Mathf.Clamp(transform.position.y, bounds.yMin + _playerSize.y / 2, 0.0f - _playerSize.y / 2);
-
         transform.position = new Vector3(transform.position.x, y, transform.position.z);
 
         if (transform.position.x >= bounds.xMax)
@@ -61,16 +75,15 @@ public class Player : MonoBehaviour
 
     void Fire()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _nextFire)
+        _nextFire = Time.time + _fireRate;
+
+        if (_isTripleShotEnabled)
         {
-            _nextFire = Time.time + _fireRate;
-
-            float playerVerticalOffset = _playerSize.y / 2;
-            float laserVerticalOffset = (_laserPrefab.GetComponent<BoxCollider2D>().size * _laserPrefab.transform.localScale).y / 2;
-
-            Vector3 spawnPosition = new Vector3(transform.position.x, transform.position.y + playerVerticalOffset - laserVerticalOffset, transform.position.z);
-
-            Instantiate(_laserPrefab, spawnPosition, Quaternion.identity);
+            Instantiate(_tripleShotPrefab, new Vector3(transform.position.x, transform.position.y + _laserSpawnVerticalOffset, transform.position.z), Quaternion.identity);
+        }
+        else
+        {
+            Instantiate(_laserPrefab, transform.position, Quaternion.identity);
         }
     }
 
@@ -87,5 +100,17 @@ public class Player : MonoBehaviour
 
             Destroy(this.gameObject);
         }
+    }
+
+    public void ActivateTripleShot()
+    {
+        _isTripleShotEnabled = true;
+        StartCoroutine(TripleShotPowerDownRoutine());
+    }
+
+    IEnumerator TripleShotPowerDownRoutine()
+    {
+        yield return new WaitForSeconds(_powerDownTime);
+        _isTripleShotEnabled = false;
     }
 }
