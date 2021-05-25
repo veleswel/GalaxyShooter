@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraBoundsComponent : MonoBehaviour
+public class CameraBounds : MonoBehaviour
 {
     private Vector3 bl;
     private Vector3 tl;
     private Vector3 br;
     private Vector3 tr;
 
-    private Rect bounds;
+    private Rect _bounds;
 
     public Rect Bounds 
     {
-        get { return bounds; }
+        get { return _bounds; }
     }
 
     void Awake()
@@ -23,7 +23,7 @@ public class CameraBoundsComponent : MonoBehaviour
         br = new Vector3();
         tr = new Vector3();
 
-        bounds = new Rect();
+        _bounds = new Rect();
 
         CalculateBounds();
     }
@@ -35,10 +35,10 @@ public class CameraBoundsComponent : MonoBehaviour
         br = Camera.main.ViewportToWorldPoint(new Vector3(1, 0, -Camera.main.transform.position.z));
         tr = Camera.main.ViewportToWorldPoint(new Vector3(1, 1, -Camera.main.transform.position.z));
 
-        bounds.xMin = bl.x;
-        bounds.yMin = bl.y;
-        bounds.xMax = tr.x;
-        bounds.yMax = tr.y;
+        _bounds.xMin = bl.x;
+        _bounds.yMin = bl.y;
+        _bounds.xMax = tr.x;
+        _bounds.yMax = tr.y;
     }
 
     void Update()

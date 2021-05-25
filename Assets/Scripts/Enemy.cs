@@ -6,9 +6,16 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField]
     private float _speed = 3.5f;
+
+    private Player _player;
+
+    private CameraBounds _cameraBounds;
+
     void Start()
     {
-       
+        _player = GameObject.Find("Player").GetComponent<Player>();
+
+        _cameraBounds = Camera.main.GetComponent<CameraBounds>();
     }
 
     void Update()
@@ -20,17 +27,20 @@ public class Enemy : MonoBehaviour
     {
         if (collider.gameObject.tag == "Laser")
         {
+            if (_player != null)
+            {
+                _player.OnEnemyDestroyed();
+            }
+
             Destroy(collider.gameObject);
             Destroy(this.gameObject);
         }
 
         if(collider.gameObject.tag == "Player")
         {
-            Player player = collider.gameObject.GetComponent<Player>();
-            
-            if (player != null)
+            if (_player != null)
             {
-                player.Damage();
+                _player.Damage();
             }
             
             Destroy(this.gameObject);
@@ -41,7 +51,7 @@ public class Enemy : MonoBehaviour
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
 
-        Rect bounds = Camera.main.GetComponent<CameraBoundsComponent>().Bounds;
+        Rect bounds = _cameraBounds.Bounds;
 
         if (transform.position.y <= bounds.yMin)
         {

@@ -2,16 +2,26 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum PowerupID { TripleShot, Speed, Shield };
+
 public class Powerup : MonoBehaviour
 {
     [SerializeField]
-    private float _speed = 3.5f;
+    private float _speed = 4f;
 
-    // Update is called once per frame
+    [SerializeField]
+    private PowerupID _powerupID = PowerupID.TripleShot;
+
+    CameraBounds _cameraBounds;
+    void Start()
+    {
+        _cameraBounds = Camera.main.GetComponent<CameraBounds>();
+    }
+
     void Update()
     {
         transform.Translate(Vector3.down * _speed * Time.deltaTime);
-        Rect bounds = Camera.main.GetComponent<CameraBoundsComponent>().Bounds;
+        Rect bounds = _cameraBounds.Bounds;
 
         if (transform.position.y <= bounds.yMin)
         {
@@ -27,7 +37,7 @@ public class Powerup : MonoBehaviour
             
             if (player != null)
             {
-                player.ActivateTripleShot();
+                player.ActivatePowerup(_powerupID);
             }
             
             Destroy(this.gameObject);

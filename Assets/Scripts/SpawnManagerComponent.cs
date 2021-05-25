@@ -14,14 +14,13 @@ public class SpawnManagerComponent : MonoBehaviour
     private float _enemySpawnInterval = 5f;
 
     [SerializeField]
-    private GameObject _tripleShotPrefab;
+    private GameObject[] _powerups;
 
     [SerializeField]
-    private float _tripleShotSpawnIntervalMin = 3f;
+    private float _powerupSpawnIntervalMin = 7f;
     
     [SerializeField]
-    private float _tripleShotSpawnIntervalMax = 7f;
-
+    private float _powerupSpawnIntervalMax = 15f;
 
     public bool StopSpawning { get; set; } = false;
 
@@ -42,7 +41,7 @@ public class SpawnManagerComponent : MonoBehaviour
     {
         while (!StopSpawning)
         {
-            Rect bounds = Camera.main.GetComponent<CameraBoundsComponent>().Bounds;
+            Rect bounds = Camera.main.GetComponent<CameraBounds>().Bounds;
 
             Vector3 position = new Vector3(Random.Range(bounds.xMin, bounds.xMax), bounds.yMax, 0);
 
@@ -57,15 +56,16 @@ public class SpawnManagerComponent : MonoBehaviour
     {
         while (!StopSpawning)
         {
-            float tripleShotSpawnInterval = Random.Range(_tripleShotSpawnIntervalMin, _tripleShotSpawnIntervalMax);
+            float powerupSpawnInterval = Random.Range(_powerupSpawnIntervalMin, _powerupSpawnIntervalMax);
 
-            yield return new WaitForSeconds(tripleShotSpawnInterval);
+            yield return new WaitForSeconds(powerupSpawnInterval);
 
-            Rect bounds = Camera.main.GetComponent<CameraBoundsComponent>().Bounds;
-
+            Rect bounds = Camera.main.GetComponent<CameraBounds>().Bounds;
             Vector3 position = new Vector3(Random.Range(bounds.xMin, bounds.xMax), bounds.yMax, 0);
 
-            Instantiate(_tripleShotPrefab, position, Quaternion.identity);
+            int powerupID = Random.Range(0, _powerups.Length);
+
+            Instantiate(_powerups[powerupID], position, Quaternion.identity);
         }
     }
 }

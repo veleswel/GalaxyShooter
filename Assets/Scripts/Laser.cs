@@ -8,11 +8,18 @@ public class Laser : MonoBehaviour
     [SerializeField]
     private float _speed = 25.0f;
 
+    CameraBounds _cameraBounds;
+
+    void Start()
+    {
+        _cameraBounds = Camera.main.GetComponent<CameraBounds>();
+    }
+
     void Update()
     {
         transform.Translate(Vector3.up * _speed * Time.deltaTime);
 
-        Rect bounds = Camera.main.GetComponent<CameraBoundsComponent>().Bounds;
+        Rect bounds = _cameraBounds.Bounds;
 
         if (transform.position.y >= bounds.yMax || transform.position.y <= bounds.yMin)
         {
