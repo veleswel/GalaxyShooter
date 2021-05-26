@@ -21,6 +21,8 @@ public class Player : MonoBehaviour
     private GameObject _tripleShotPrefab;
     [SerializeField]
     private GameObject _shieldPrefab;
+    [SerializeField]
+    private GameObject[] _damageEffects;
 
     private GameObject _shield;
     private IEnumerator _shieldDownRoutine;
@@ -71,6 +73,11 @@ public class Player : MonoBehaviour
         _playerSize = GetComponent<BoxCollider2D>().size * transform.localScale;
 
         _cameraBounds = Camera.main.GetComponent<CameraBounds>();
+
+        foreach (GameObject effect in _damageEffects)
+        {
+            effect.SetActive(false);
+        }
     }
 
     void Update()
@@ -141,6 +148,11 @@ public class Player : MonoBehaviour
             _gameManager.GameOver();
 
             Destroy(this.gameObject);
+        }
+        else
+        {
+            GameObject damageEffect = _damageEffects[_lives - 1];
+            damageEffect.SetActive(true);
         }
     }
 
